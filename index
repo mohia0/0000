@@ -1,0 +1,1527 @@
+# Create a single-file CRM dashboard (index.html) and save it for download
+
+html_content = r"""<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Freelancer CRM – One-Page Dashboard</title>
+
+<style>
+
+  :root{
+
+    --bg:#0b0c10;
+
+    --panel:#11131a;
+
+    --panel-2:#151826;
+
+    --muted:#7f8ca3;
+
+    --text:#e7edf7;
+
+    --brand:#6aa6ff;
+
+    --ok:#2ecc71;
+
+    --warn:#f1c40f;
+
+    --danger:#ff6b6b;
+
+    --border:#23283a;
+
+    --chip:#1b2030;
+
+    --input:#0f1220;
+
+    --shadow: 0 8px 30px rgba(0,0,0,.35);
+
+    --radius: 16px;
+
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{height:100%}
+
+  body{
+
+    margin:0;
+
+    font:14px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+    color:var(--text);
+
+    background:radial-gradient(1200px 800px at 80% -10%, rgba(106,166,255,.08), transparent),
+
+               radial-gradient(900px 600px at -10% 10%, rgba(255,107,107,.05), transparent),
+
+               var(--bg);
+
+    letter-spacing:.2px;
+
+  }
+
+  /* Layout */
+
+  .app{
+
+    display:grid;
+
+    grid-template-columns:280px 1fr;
+
+    min-height:100vh;
+
+  }
+
+  aside{
+
+    border-right:1px solid var(--border);
+
+    padding:20px 14px;
+
+    position:sticky; top:0; height:100dvh;
+
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent 60%), var(--panel);
+
+  }
+
+  .brand{
+
+    display:flex; gap:10px; align-items:center; padding:8px 10px; border-radius:12px;
+
+    background:linear-gradient(180deg, rgba(106,166,255,.09), rgba(106,166,255,.03));
+
+    box-shadow: var(--shadow);
+
+    border:1px solid #1c2640;
+
+    margin-bottom:16px;
+
+  }
+
+  .brand svg{flex:0 0 auto}
+
+  .brand h1{font-size:16px; margin:0; letter-spacing:.6px}
+
+  .muted{color:var(--muted)}
+
+  nav{display:flex; flex-direction:column; gap:6px; margin-top:12px}
+
+  .nav-btn{
+
+    display:flex; align-items:center; gap:10px;
+
+    padding:12px 12px; border-radius:12px;
+
+    background:transparent; color:var(--text); border:1px solid transparent;
+
+    cursor:pointer; transition:.2s;
+
+  }
+
+  .nav-btn:hover{background:#14192b; border-color:#1e2a4d}
+
+  .nav-btn.active{background:#0f1528; border-color:#243258; box-shadow: inset 0 0 0 1px #243258}
+
+  .spacer{height:10px}
+
+  .grow{flex:1}
+
+  .tiny{font-size:12px}
+
+  .footer{margin-top:auto; font-size:12px; color:var(--muted); padding:10px 6px}
+
+  main{padding:22px; display:grid; gap:18px}
+
+  .bar{display:flex; gap:12px; align-items:center; justify-content:space-between}
+
+  .search{display:flex; align-items:center; gap:8px; background:var(--input); border:1px solid var(--border); padding:10px 12px; border-radius:12px; min-width:260px}
+
+  .search input{background:transparent; border:none; outline:none; color:var(--text); width:200px}
+
+  .btn{background:var(--brand); color:#08111f; border:none; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600}
+
+  .btn.ghost{background:transparent; border:1px solid #223157; color:var(--text)}
+
+  .btn.small{padding:8px 10px; border-radius:10px; font-size:12px}
+
+  .grid{display:grid; gap:14px}
+
+  .cards{grid-template-columns:repeat(4, minmax(220px, 1fr))}
+
+  .panel{
+
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent 50%), var(--panel-2);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    padding:16px;
+
+  }
+
+  .panel h3{margin:0 0 10px 0; font-size:14px; letter-spacing:.6px; text-transform:uppercase; color:#c7d4eb}
+
+  .big{font-size:28px; font-weight:700}
+
+  .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--chip); border:1px solid var(--border); font-size:12px}
+
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+  .table{width:100%; border-collapse:collapse; font-size:13px}
+
+  .table th,.table td{border-bottom:1px dashed #27314a; padding:10px 6px; text-align:left; vertical-align:top}
+
+  .table tr:hover td{background:#0d1222}
+
+  .right{text-align:right}
+
+  .input, select, textarea{background:var(--input); border:1px solid var(--border); color:var(--text); border-radius:12px; padding:10px 12px; outline:none}
+
+  .input::placeholder{color:#95a3be}
+
+  textarea{min-height:120px; width:100%; resize:vertical}
+
+  .stack{display:grid; gap:10px}
+
+  .split{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+
+  .hidden{display:none !important}
+
+  .tag{font-size:11px; padding:4px 8px; background:#0c1428; border:1px solid #1f2c4d; border-radius:999px}
+
+  .badge{padding:6px 8px; border-radius:8px; font-size:12px}
+
+  .paid{background:rgba(46,204,113,.15); border:1px solid rgba(46,204,113,.35)}
+
+  .due{background:rgba(241,196,15,.15); border:1px solid rgba(241,196,15,.35)}
+
+  .over{background:rgba(255,107,107,.15); border:1px solid rgba(255,107,107,.35)}
+
+  .kpi{display:flex; align-items:center; gap:10px}
+
+  .kpi svg{opacity:.9}
+
+  .mini{font-size:12px; color:var(--muted)}
+
+  .toolbar{display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap}
+
+  .editor{border:1px dashed #2a3556; padding:12px; border-radius:12px; min-height:120px; background:#0c1120}
+
+  .editor[contenteditable="true"]:focus{outline:2px solid #27457a}
+
+  .sticky-actions{position:sticky; top:10px; display:flex; gap:8px; justify-content:flex-end}
+
+  /* Print */
+
+  @media print{
+
+    aside, .bar, .sticky-actions { display:none !important; }
+
+    body{background:white; color:#000}
+
+    main{padding:0}
+
+    .panel{box-shadow:none; border:none}
+
+    .editor{border:none}
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside>
+
+    <div class="brand">
+
+      <!-- Minimal logo -->
+
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+
+        <rect x="3" y="3" width="18" height="18" rx="5" stroke="#6aa6ff" stroke-width="2"/>
+
+        <path d="M7 15l3-3 3 3 4-4" stroke="#6aa6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+      </svg>
+
+      <div>
+
+        <h1>Freelancer CRM</h1>
+
+        <div class="tiny muted">One-file dashboard</div>
+
+      </div>
+
+    </div>
+
+    <nav id="nav">
+
+      <button class="nav-btn active" data-view="home">
+
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2v-9z" stroke="currentColor" stroke-width="2" /></svg>
+
+        Home
+
+      </button>
+
+      <button class="nav-btn" data-view="contacts">
+
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" stroke="currentColor" stroke-width="2"/><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="2"/></svg>
+
+        Contacts
+
+      </button>
+
+      <button class="nav-btn" data-view="proposals">
+
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h11l5 5v7a2 2 0 0 1-2 2H4z" stroke="currentColor" stroke-width="2"/><path d="M15 6v5h5" stroke="currentColor" stroke-width="2"/></svg>
+
+        Proposals
+
+      </button>
+
+      <button class="nav-btn" data-view="invoices">
+
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/><path d="M7 9h10M7 12h10M7 15h6" stroke="currentColor" stroke-width="2"/></svg>
+
+        Invoices
+
+      </button>
+
+    </nav>
+
+    <div class="footer tiny">
+
+      Local-first. Auto-saves to your browser.
+
+      <div class="spacer"></div>
+
+      <button id="downloadBtn" class="btn small" style="width:100%">Download this page</button>
+
+    </div>
+
+  </aside>
+
+  <main>
+
+    <div class="bar">
+
+      <div class="search">
+
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#95a3be" stroke-width="2"/><path d="M20 20l-3-3" stroke="#95a3be" stroke-width="2" stroke-linecap="round"/></svg>
+
+        <input id="globalSearch" placeholder="Search everywhere.." />
+
+      </div>
+
+      <div class="row">
+
+        <span class="chip">YTD <strong id="ytdTotal">$0</strong></span>
+
+        <span class="chip">This month <strong id="mtdTotal">$0</strong></span>
+
+        <button class="btn ghost small" onclick="window.print()">Export current view to PDF</button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- HOME -->
+
+    <section id="view-home" class="grid">
+
+      <div class="grid cards">
+
+        <div class="panel">
+
+          <h3>Total Contacts</h3>
+
+          <div class="kpi">
+
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" stroke="#6aa6ff" stroke-width="2"/><path d="M4 21a8 8 0 0 1 16 0" stroke="#6aa6ff" stroke-width="2"/></svg>
+
+            <div class="big" id="kpiContacts">0</div>
+
+          </div>
+
+          <div class="mini muted">All clients saved in Contacts.</div>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Open Proposals</h3>
+
+          <div class="kpi">
+
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 6h11l5 5v7a2 2 0 0 1-2 2H4z" stroke="#6aa6ff" stroke-width="2"/></svg>
+
+            <div class="big" id="kpiProposals">0</div>
+
+          </div>
+
+          <div class="mini muted">Status = Draft or Sent.</div>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Invoices Due</h3>
+
+          <div class="kpi">
+
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="#6aa6ff" stroke-width="2"/><path d="M7 9h10" stroke="#6aa6ff" stroke-width="2"/></svg>
+
+            <div class="big" id="kpiDue">0</div>
+
+          </div>
+
+          <div class="mini muted">Unpaid and past due date.</div>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Paid Invoices</h3>
+
+          <div class="kpi">
+
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M20 7l-9 9-4-4" stroke="#6aa6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+            <div class="big" id="kpiPaid">0</div>
+
+          </div>
+
+          <div class="mini muted">All-time count.</div>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="panel">
+
+        <h3>Recent Activity</h3>
+
+        <table class="table" id="activityTable">
+
+          <thead><tr><th>When</th><th>Type</th><th>Title</th><th>Client</th><th class="right">Amount</th></tr></thead>
+
+          <tbody></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- CONTACTS -->
+
+    <section id="view-contacts" class="grid hidden">
+
+      <div class="bar">
+
+        <div class="row">
+
+          <button class="btn small" id="addContact">New Contact</button>
+
+          <input class="input" id="contactSearch" placeholder="Search contacts.." />
+
+        </div>
+
+        <div class="sticky-actions">
+
+          <button class="btn ghost small" onclick="exportTablePDF('contactsTable')">Export list</button>
+
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Contacts</h3>
+
+        <table class="table" id="contactsTable">
+
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Notes</th><th></th></tr></thead>
+
+          <tbody></tbody>
+
+        </table>
+
+      </div>
+
+      <div class="panel">
+
+        <h3>Contact Details</h3>
+
+        <div class="split">
+
+          <div class="stack">
+
+            <input class="input" id="c_name" placeholder="Full name" />
+
+            <div class="split">
+
+              <input class="input" id="c_email" placeholder="Email" />
+
+              <input class="input" id="c_phone" placeholder="Phone" />
+
+            </div>
+
+            <div class="split">
+
+              <input class="input" id="c_company" placeholder="Company" />
+
+              <input class="input" id="c_position" placeholder="Position / Role" />
+
+            </div>
+
+            <input class="input" id="c_tags" placeholder="Tags (comma separated)" />
+
+            <textarea id="c_notes" placeholder="Notes"></textarea>
+
+            <div class="row">
+
+              <button class="btn small" id="saveContact">Save</button>
+
+              <button class="btn ghost small" id="deleteContact">Delete</button>
+
+            </div>
+
+          </div>
+
+          <div class="stack">
+
+            <div class="chip">Linked Records</div>
+
+            <div id="contactLinks" class="stack tiny muted"></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- PROPOSALS -->
+
+    <section id="view-proposals" class="grid hidden">
+
+      <div class="bar">
+
+        <div class="row">
+
+          <button class="btn small" id="addProposal">New Proposal</button>
+
+          <input class="input" id="proposalSearch" placeholder="Search proposals.." />
+
+        </div>
+
+        <div class="sticky-actions">
+
+          <button class="btn ghost small" onclick="exportCurrentDoc('proposal')">Export current proposal</button>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="panel">
+
+        <h3>List</h3>
+
+        <table class="table" id="proposalsTable">
+
+          <thead><tr><th>Title</th><th>Client</th><th>Status</th><th>Date</th><th class="right">Total</th><th></th></tr></thead>
+
+          <tbody></tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <div class="panel">
+
+        <h3>Editor</h3>
+
+        <div class="stack">
+
+          <div class="split">
+
+            <input class="input" id="p_title" placeholder="Proposal title" />
+
+            <select id="p_client" class="input"></select>
+
+          </div>
+
+          <div class="toolbar">
+
+            <span class="tag">Rich text</span>
+
+            <button class="btn small ghost" onclick="formatDoc('bold')">Bold</button>
+
+            <button class="btn small ghost" onclick="formatDoc('italic')">Italic</button>
+
+            <button class="btn small ghost" onclick="formatDoc('insertUnorderedList')">• List</button>
+
+            <button class="btn small ghost" onclick="formatDoc('formatBlock','H3')">H3</button>
+
+          </div>
+
+          <div id="p_editor" class="editor" contenteditable="true" placeholder="Write the proposal content.."></div>
+
+          <div class="row">
+
+            <span class="chip">Price Table</span>
+
+            <button class="btn small ghost" onclick="addLine('p')">Add line</button>
+
+          </div>
+
+          <table class="table" id="p_lines">
+
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Tax %</th><th class="right">Total</th><th></th></tr></thead>
+
+            <tbody></tbody>
+
+            <tfoot>
+
+              <tr><td colspan="4" class="right">Subtotal</td><td class="right" id="p_sub">$0</td><td></td></tr>
+
+              <tr><td colspan="4" class="right">Tax</td><td class="right" id="p_tax">$0</td><td></td></tr>
+
+              <tr><td colspan="4" class="right"><strong>Grand Total</strong></td><td class="right" id="p_total"><strong>$0</strong></td><td></td></tr>
+
+            </tfoot>
+
+          </table>
+
+          <div class="row">
+
+            <select id="p_status" class="input">
+
+              <option>Draft</option><option>Sent</option><option>Accepted</option><option>Rejected</option>
+
+            </select>
+
+            <input id="p_date" type="date" class="input" />
+
+            <button class="btn small" id="saveProposal">Save</button>
+
+            <button class="btn small ghost" id="deleteProposal">Delete</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- INVOICES -->
+
+    <section id="view-invoices" class="grid hidden">
+
+      <div class="bar">
+
+        <div class="row">
+
+          <button class="btn small" id="addInvoice">New Invoice</button>
+
+          <input class="input" id="invoiceSearch" placeholder="Search invoices.." />
+
+        </div>
+
+        <div class="sticky-actions">
+
+          <button class="btn ghost small" onclick="exportCurrentDoc('invoice')">Export current invoice</button>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="panel">
+
+        <h3>List</h3>
+
+        <table class="table" id="invoicesTable">
+
+          <thead><tr><th>#</th><th>Client</th><th>Status</th><th>Issue</th><th>Due</th><th class="right">Total</th><th></th></tr></thead>
+
+          <tbody></tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <div class="panel">
+
+        <h3>Editor</h3>
+
+        <div class="stack">
+
+          <div class="split">
+
+            <input class="input" id="i_number" placeholder="Invoice #" />
+
+            <select id="i_client" class="input"></select>
+
+          </div>
+
+          <div class="split">
+
+            <input class="input" id="i_issue" type="date" />
+
+            <input class="input" id="i_due" type="date" />
+
+          </div>
+
+          <div id="i_editor" class="editor" contenteditable="true" placeholder="Write invoice notes.."></div>
+
+          <div class="row">
+
+            <span class="chip">Line Items</span>
+
+            <button class="btn small ghost" onclick="addLine('i')">Add line</button>
+
+          </div>
+
+          <table class="table" id="i_lines">
+
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Tax %</th><th class="right">Total</th><th></th></tr></thead>
+
+            <tbody></tbody>
+
+            <tfoot>
+
+              <tr><td colspan="4" class="right">Subtotal</td><td class="right" id="i_sub">$0</td><td></td></tr>
+
+              <tr><td colspan="4" class="right">Tax</td><td class="right" id="i_tax">$0</td><td></td></tr>
+
+              <tr><td colspan="4" class="right"><strong>Grand Total</strong></td><td class="right" id="i_total"><strong>$0</strong></td><td></td></tr>
+
+            </tfoot>
+
+          </table>
+
+          <div class="row">
+
+            <select id="i_status" class="input">
+
+              <option>Draft</option><option>Sent</option><option>Paid</option><option>Overdue</option>
+
+            </select>
+
+            <button class="btn small" id="saveInvoice">Save</button>
+
+            <button class="btn small ghost" id="deleteInvoice">Delete</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+
+<script>
+
+/* ---------- Utilities & State ---------- */
+
+const $ = sel => document.querySelector(sel);
+
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+const state = JSON.parse(localStorage.getItem('crm_state')||'{}');
+
+state.contacts = state.contacts || [];
+
+state.proposals = state.proposals || [];
+
+state.invoices = state.invoices || [];
+
+let selected = { contact:null, proposal:null, invoice:null };
+
+
+
+function persist(){ localStorage.setItem('crm_state', JSON.stringify(state)); refresh(); }
+
+function currency(n){ n = +(+n).toFixed(2); return (isNaN(n)?0:n).toLocaleString(undefined,{style:'currency', currency:'USD'}) }
+
+function uid(){ return Math.random().toString(36).slice(2,9) }
+
+function today(){ return new Date().toISOString().slice(0,10) }
+
+function sum(arr){ return arr.reduce((a,b)=>a+(+b||0),0) }
+
+
+
+/* ---------- Nav ---------- */
+
+$$('.nav-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+
+  $$('.nav-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+
+  const view = btn.dataset.view;
+
+  $$('main > section').forEach(s=>s.classList.add('hidden'));
+
+  $('#view-'+view).classList.remove('hidden');
+
+  if(view==='proposals') fillClients('p_client');
+
+  if(view==='invoices') fillClients('i_client');
+
+  refresh();
+
+}));
+
+
+
+$('#downloadBtn').onclick = () => {
+
+  const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'index.html'; a.click();
+
+  URL.revokeObjectURL(a.href);
+
+};
+
+
+
+/* ---------- Global Search ---------- */
+
+$('#globalSearch').addEventListener('input', e=>{
+
+  const q = e.target.value.toLowerCase();
+
+  // simple highlight/filter current view tables
+
+  ['contactsTable','proposalsTable','invoicesTable','activityTable'].forEach(id=>{
+
+    const tbl = document.getElementById(id); if(!tbl) return;
+
+    tbl.querySelectorAll('tbody tr').forEach(tr=>{
+
+      tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+
+    });
+
+  });
+
+});
+
+
+
+/* ---------- Contacts ---------- */
+
+function renderContacts(){
+
+  const tb = $('#contactsTable tbody'); tb.innerHTML = '';
+
+  state.contacts.forEach(c=>{
+
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = \`
+
+      <td>\${c.name||''}</td>
+
+      <td>\${c.email||''}</td>
+
+      <td>\${c.phone||''}</td>
+
+      <td>\${c.company||''}</td>
+
+      <td class="tiny muted">\${c.notes||''}</td>
+
+      <td class="right"><button class="btn small ghost" data-id="\${c.id}">Open</button></td>\`;
+
+    tr.querySelector('button').onclick = () => openContact(c.id);
+
+    tb.appendChild(tr);
+
+  });
+
+  $('#kpiContacts').textContent = state.contacts.length;
+
+}
+
+function openContact(id){
+
+  const c = state.contacts.find(x=>x.id===id); selected.contact = id;
+
+  $('#c_name').value = c?.name||'';
+
+  $('#c_email').value = c?.email||'';
+
+  $('#c_phone').value = c?.phone||'';
+
+  $('#c_company').value = c?.company||'';
+
+  $('#c_position').value = c?.position||'';
+
+  $('#c_tags').value = (c?.tags||[]).join(', ');
+
+  $('#c_notes').value = c?.notes||'';
+
+  const links = [];
+
+  state.proposals.filter(p=>p.clientId===id).forEach(p=>links.push(\`📄 Proposal: \${p.title}\`));
+
+  state.invoices.filter(i=>i.clientId===id).forEach(i=>links.push(\`🧾 Invoice: #\${i.number||i.id}\`));
+
+  $('#contactLinks').innerHTML = links.map(x=>\`<div>\${x}</div>\`).join('') || '<div class="muted">No linked records yet.</div>';
+
+}
+
+$('#addContact').onclick = ()=>{
+
+  const c = {id:uid(), name:'', email:'', phone:'', company:'', position:'', tags:[], notes:''};
+
+  state.contacts.unshift(c); persist(); openContact(c.id);
+
+};
+
+$('#saveContact').onclick = ()=>{
+
+  if(!selected.contact) return;
+
+  const idx = state.contacts.findIndex(x=>x.id===selected.contact);
+
+  const c = state.contacts[idx];
+
+  c.name = $('#c_name').value.trim();
+
+  c.email = $('#c_email').value.trim();
+
+  c.phone = $('#c_phone').value.trim();
+
+  c.company = $('#c_company').value.trim();
+
+  c.position = $('#c_position').value.trim();
+
+  c.tags = $('#c_tags').value.split(',').map(s=>s.trim()).filter(Boolean);
+
+  c.notes = $('#c_notes').value.trim();
+
+  persist();
+
+};
+
+$('#deleteContact').onclick = ()=>{
+
+  if(!selected.contact) return;
+
+  state.contacts = state.contacts.filter(x=>x.id!==selected.contact);
+
+  selected.contact=null; persist();
+
+};
+
+$('#contactSearch').oninput = (e)=>{
+
+  const q = e.target.value.toLowerCase();
+
+  $('#contactsTable').querySelectorAll('tbody tr').forEach(tr=>{
+
+    tr.style.display = tr.innerText.toLowerCase().includes(q)?'':'';
+
+  });
+
+};
+
+
+
+/* ---------- Proposals ---------- */
+
+function fillClients(selectId){
+
+  const sel = $('#'+selectId); sel.innerHTML = '<option value="">Select client..</option>';
+
+  state.contacts.forEach(c=>{
+
+    const opt = document.createElement('option'); opt.value=c.id; opt.textContent=c.name||c.email||c.company||'Unnamed';
+
+    sel.appendChild(opt);
+
+  });
+
+}
+
+function renderProposals(){
+
+  const tb = $('#proposalsTable tbody'); tb.innerHTML='';
+
+  state.proposals.forEach(p=>{
+
+    const client = state.contacts.find(c=>c.id===p.clientId);
+
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = \`
+
+      <td>\${p.title||'(Untitled)'}</td>
+
+      <td>\${client?.name||'—'}</td>
+
+      <td><span class="badge \${p.status==='Accepted'?'paid':p.status==='Rejected'?'over':'due'}">\${p.status}</span></td>
+
+      <td>\${p.date||''}</td>
+
+      <td class="right">\${currency(totalFromLines(p.lines))}</td>
+
+      <td class="right"><button class="btn small ghost" data-id="\${p.id}">Open</button></td>\`;
+
+    tr.querySelector('button').onclick = () => openProposal(p.id);
+
+    tb.appendChild(tr);
+
+  });
+
+  $('#kpiProposals').textContent = state.proposals.filter(p=>['Draft','Sent'].includes(p.status)).length;
+
+}
+
+function newLine(){ return { item:'', qty:1, unit:0, tax:0 } }
+
+function addLine(prefix){
+
+  const body = document.querySelector('#'+prefix+'_lines tbody');
+
+  const tr = document.createElement('tr');
+
+  tr.innerHTML = \`
+
+    <td contenteditable="true" class="editor-cell"></td>
+
+    <td contenteditable="true" class="editor-cell" data-type="number">1</td>
+
+    <td contenteditable="true" class="editor-cell" data-type="number">0</td>
+
+    <td contenteditable="true" class="editor-cell" data-type="number">0</td>
+
+    <td class="right total">$0</td>
+
+    <td class="right"><button class="btn small ghost">×</button></td>\`;
+
+  tr.querySelector('button').onclick = ()=>{ tr.remove(); recalc(prefix); };
+
+  ['input','blur','keyup'].forEach(ev=> tr.addEventListener(ev, ()=> recalc(prefix) ));
+
+  body.appendChild(tr); recalc(prefix);
+
+}
+
+function tableToLines(prefix){
+
+  return Array.from(document.querySelector('#'+prefix+'_lines tbody').rows).map(r=>{
+
+    const tds = r.querySelectorAll('td');
+
+    return { item: tds[0].innerText.trim(), qty:+tds[1].innerText||0, unit:+tds[2].innerText||0, tax:+tds[3].innerText||0 };
+
+  });
+
+}
+
+function linesToTable(prefix, lines){
+
+  const body = document.querySelector('#'+prefix+'_lines tbody'); body.innerHTML='';
+
+  (lines||[]).forEach(l=>{
+
+    addLine(prefix);
+
+    const row = body.lastElementChild;
+
+    const t = row.querySelectorAll('td');
+
+    t[0].innerText = l.item||''; t[1].innerText = l.qty||1; t[2].innerText = l.unit||0; t[3].innerText = l.tax||0;
+
+  });
+
+  recalc(prefix);
+
+}
+
+function recalc(prefix){
+
+  const lines = tableToLines(prefix);
+
+  let subtotal = 0, tax = 0;
+
+  lines.forEach(l=>{
+
+    const line = (+l.qty||0) * (+l.unit||0);
+
+    const ltax = line * ((+l.tax||0)/100);
+
+    subtotal += line; tax += ltax;
+
+  });
+
+  const total = subtotal + tax;
+
+  $('#'+prefix+'_sub').textContent = currency(subtotal);
+
+  $('#'+prefix+'_tax').textContent = currency(tax);
+
+  $('#'+prefix+'_total').innerHTML = '<strong>'+currency(total)+'</strong>';
+
+  // Update row totals
+
+  document.querySelectorAll('#'+prefix+'_lines tbody tr').forEach((r,i)=>{
+
+    const l = lines[i]; const line = (+l.qty||0) * (+l.unit||0) * (1 + (+l.tax||0)/100);
+
+    r.querySelector('.total').textContent = currency(line);
+
+  });
+
+  return total;
+
+}
+
+function totalFromLines(lines){
+
+  lines = lines || [];
+
+  let subtotal = 0, tax=0;
+
+  lines.forEach(l=>{ const line=(+l.qty||0)*(+l.unit||0); subtotal+=line; tax += line*((+l.tax||0)/100); });
+
+  return subtotal+tax;
+
+}
+
+function openProposal(id){
+
+  const p = state.proposals.find(x=>x.id===id); selected.proposal = id;
+
+  $('#p_title').value = p?.title||'';
+
+  $('#p_client').value = p?.clientId||'';
+
+  $('#p_status').value = p?.status||'Draft';
+
+  $('#p_date').value = p?.date||today();
+
+  $('#p_editor').innerHTML = p?.html||'';
+
+  linesToTable('p', p?.lines||[]);
+
+}
+
+$('#addProposal').onclick = ()=>{
+
+  const p = {id:uid(), title:'', clientId:'', status:'Draft', date:today(), html:'', lines:[newLine()]};
+
+  state.proposals.unshift(p); persist(); openProposal(p.id);
+
+};
+
+$('#saveProposal').onclick = ()=>{
+
+  if(!selected.proposal) return;
+
+  const idx = state.proposals.findIndex(x=>x.id===selected.proposal);
+
+  const p = state.proposals[idx];
+
+  p.title = $('#p_title').value.trim();
+
+  p.clientId = $('#p_client').value;
+
+  p.status = $('#p_status').value;
+
+  p.date = $('#p_date').value || today();
+
+  p.html = $('#p_editor').innerHTML;
+
+  p.lines = tableToLines('p');
+
+  addActivity({type:'Proposal', title:p.title||'(Untitled)', clientId:p.clientId, amount: totalFromLines(p.lines)});
+
+  persist();
+
+};
+
+$('#deleteProposal').onclick = ()=>{
+
+  if(!selected.proposal) return;
+
+  state.proposals = state.proposals.filter(x=>x.id!==selected.proposal);
+
+  selected.proposal=null; persist();
+
+};
+
+$('#proposalSearch').oninput = (e)=>{
+
+  const q = e.target.value.toLowerCase();
+
+  $('#proposalsTable').querySelectorAll('tbody tr').forEach(tr=> tr.style.display = tr.innerText.toLowerCase().includes(q)?'':'');
+
+};
+
+
+
+/* ---------- Invoices ---------- */
+
+function renderInvoices(){
+
+  const tb = $('#invoicesTable tbody'); tb.innerHTML='';
+
+  state.invoices.forEach(inv=>{
+
+    const client = state.contacts.find(c=>c.id===inv.clientId);
+
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = \`
+
+      <td>\${inv.number||inv.id}</td>
+
+      <td>\${client?.name||'—'}</td>
+
+      <td><span class="badge \${inv.status==='Paid'?'paid':inv.status==='Overdue'?'over':'due'}">\${inv.status}</span></td>
+
+      <td>\${inv.issue||''}</td>
+
+      <td>\${inv.due||''}</td>
+
+      <td class="right">\${currency(totalFromLines(inv.lines))}</td>
+
+      <td class="right"><button class="btn small ghost" data-id="\${inv.id}">Open</button></td>\`;
+
+    tr.querySelector('button').onclick = () => openInvoice(inv.id);
+
+    tb.appendChild(tr);
+
+  });
+
+  const paid = state.invoices.filter(i=>i.status==='Paid');
+
+  $('#kpiPaid').textContent = paid.length;
+
+  const due = state.invoices.filter(i=>i.status!=='Paid' && new Date(i.due||today()) < new Date());
+
+  $('#kpiDue').textContent = due.length;
+
+}
+
+function openInvoice(id){
+
+  const inv = state.invoices.find(x=>x.id===id); selected.invoice = id;
+
+  $('#i_number').value = inv?.number||'';
+
+  $('#i_client').value = inv?.clientId||'';
+
+  $('#i_issue').value = inv?.issue||today();
+
+  $('#i_due').value = inv?.due||today();
+
+  $('#i_editor').innerHTML = inv?.html||'';
+
+  linesToTable('i', inv?.lines||[]);
+
+}
+
+$('#addInvoice').onclick = ()=>{
+
+  const inv = {id:uid(), number:'', clientId:'', issue:today(), due:today(), status:'Draft', html:'', lines:[newLine()]};
+
+  state.invoices.unshift(inv); persist(); openInvoice(inv.id);
+
+};
+
+$('#saveInvoice').onclick = ()=>{
+
+  if(!selected.invoice) return;
+
+  const idx = state.invoices.findIndex(x=>x.id===selected.invoice);
+
+  const inv = state.invoices[idx];
+
+  inv.number = $('#i_number').value.trim();
+
+  inv.clientId = $('#i_client').value;
+
+  inv.issue = $('#i_issue').value || today();
+
+  inv.due = $('#i_due').value || today();
+
+  inv.status = $('#i_status').value;
+
+  inv.html = $('#i_editor').innerHTML;
+
+  inv.lines = tableToLines('i');
+
+  if(inv.status==='Paid'){
+
+    addActivity({type:'Payment', title:'Invoice '+(inv.number||inv.id), clientId:inv.clientId, amount: totalFromLines(inv.lines)});
+
+  } else {
+
+    addActivity({type:'Invoice', title:'Invoice '+(inv.number||inv.id), clientId:inv.clientId, amount: totalFromLines(inv.lines)});
+
+  }
+
+  persist();
+
+};
+
+$('#deleteInvoice').onclick = ()=>{
+
+  if(!selected.invoice) return;
+
+  state.invoices = state.invoices.filter(x=>x.id!==selected.invoice);
+
+  selected.invoice=null; persist();
+
+};
+
+$('#invoiceSearch').oninput = (e)=>{
+
+  const q = e.target.value.toLowerCase();
+
+  $('#invoicesTable').querySelectorAll('tbody tr').forEach(tr=> tr.style.display = tr.innerText.toLowerCase().includes(q)?'':'');
+
+};
+
+
+
+/* ---------- Simple Rich Text ---------- */
+
+function formatDoc(cmd, val=null){ document.execCommand(cmd,false,val); }
+
+
+
+/* ---------- Activity & Analytics ---------- */
+
+state.activity = state.activity || [];
+
+function addActivity(evt){
+
+  evt.when = new Date().toISOString();
+
+  state.activity.unshift(evt); if(state.activity.length>1000) state.activity.pop();
+
+}
+
+function renderActivity(){
+
+  const tb = $('#activityTable tbody'); tb.innerHTML='';
+
+  (state.activity||[]).slice(0,10).forEach(a=>{
+
+    const client = state.contacts.find(c=>c.id===a.clientId);
+
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = \`
+
+      <td>\${new Date(a.when).toLocaleString()}</td>
+
+      <td>\${a.type}</td>
+
+      <td>\${a.title}</td>
+
+      <td>\${client?.name||'—'}</td>
+
+      <td class="right">\${currency(a.amount||0)}</td>\`;
+
+    tb.appendChild(tr);
+
+  });
+
+}
+
+function computeTotals(){
+
+  const now = new Date();
+
+  const y = now.getFullYear(), m = now.getMonth();
+
+  const paid = state.invoices.filter(i=>i.status==='Paid');
+
+  const totalYTD = sum(paid
+
+     .filter(i=> new Date(i.issue).getFullYear()===y)
+
+     .map(i=> totalFromLines(i.lines) ));
+
+  const totalMTD = sum(paid
+
+     .filter(i=>{ const d=new Date(i.issue); return d.getFullYear()===y && d.getMonth()===m; })
+
+     .map(i=> totalFromLines(i.lines) ));
+
+  $('#ytdTotal').textContent = currency(totalYTD);
+
+  $('#mtdTotal').textContent = currency(totalMTD);
+
+}
+
+
+
+/* ---------- Export helpers (Print to PDF) ---------- */
+
+function exportTablePDF(tableId){
+
+  const win = window.open('', '_blank');
+
+  const html = \`<html><head><title>Export</title>
+
+  <style>body{font:12px Arial} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:6px;text-align:left}</style>
+
+  </head><body>\` + document.getElementById(tableId).outerHTML + '</body></html>';
+
+  win.document.write(html); win.document.close(); win.focus(); win.print();
+
+}
+
+function exportCurrentDoc(kind){
+
+  const container = kind==='proposal' ? $('#view-proposals') : $('#view-invoices');
+
+  const win = window.open('', '_blank');
+
+  const html = \`<html><head><title>\${kind}</title>
+
+  <style>
+
+    body{font:12px Arial} h1{font-size:18px} .r{float:right}
+
+    table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:6px;text-align:left}
+
+  </style></head><body>\`;
+
+  const title = kind==='proposal' ? $('#p_title').value : ('Invoice ' + ($('#i_number').value||''));
+
+  const clientName = (()=>{
+
+    const id = kind==='proposal' ? $('#p_client').value : $('#i_client').value;
+
+    const c = state.contacts.find(x=>x.id===id); return c?.name||'';
+
+  })();
+
+  const notes = (kind==='proposal' ? $('#p_editor').innerHTML : $('#i_editor').innerHTML);
+
+  const table = (kind==='proposal' ? $('#p_lines') : $('#i_lines')).outerHTML;
+
+  win.document.write(html + \`<h1>\${title}</h1><div>Client: \${clientName}</div><hr>\` + notes + '<br/>' + table + '</body></html>');
+
+  win.document.close(); win.focus(); win.print();
+
+}
+
+
+
+/* ---------- Refresh ---------- */
+
+function refresh(){
+
+  renderContacts();
+
+  renderProposals();
+
+  renderInvoices();
+
+  renderActivity();
+
+  computeTotals();
+
+}
+
+
+
+/* ---------- Seed (first run) ---------- */
+
+if(!localStorage.getItem('crm_seeded')){
+
+  const c1 = {id:uid(), name:'Acme Co.', email:'ops@acme.test', phone:'+1 555 1010', company:'Acme', position:'Ops', tags:['retainer'], notes:'Loves quick turnarounds.'};
+
+  const c2 = {id:uid(), name:'Blue Ocean', email:'hello@blue.test', phone:'+44 20 000', company:'Blue Ocean', position:'Founder', tags:['branding'], notes:'Pay on the 1st.'};
+
+  state.contacts.push(c1,c2);
+
+  const p1 = {id:uid(), title:'Brand Identity Revamp', clientId:c2.id, status:'Sent', date: today(), html:'<p>Scope: Logo, type, color, guidelines.</p>', lines:[{item:'Brand workshop',qty:1,unit:800,tax:0},{item:'Logo system',qty:1,unit:1200,tax:0}]};
+
+  const i1 = {id:uid(), number:'2025-001', clientId:c1.id, issue: today(), due: today(), status:'Paid', html:'<p>Design sprint – week 32.</p>', lines:[{item:'Sprint fee',qty:1,unit:1500,tax:0},{item:'Assets license',qty:1,unit:200,tax:0}]};
+
+  state.proposals.push(p1); state.invoices.push(i1);
+
+  addActivity({type:'Seed', title:'Welcome data', clientId:c1.id, amount: 0});
+
+  localStorage.setItem('crm_seeded','1'); persist();
+
+} else {
+
+  refresh();
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+"""
+
+# Save the HTML file
+
+path = "/mnt/data/index.html"
+
+with open(path, "w", encoding="utf-8") as f:
+
+    f.write(html_content)
+
+
+
+path
